@@ -34,7 +34,7 @@ describe('all-employees Endpoints', function() {
         context('Happy Path', () => {
             it('responds 200 and all ACTIVE employees are returned', () => {
                 const expectedResult = testEmployees.filter(employee => {
-                    employee.Status === 'ACTIVE';
+                    return employee.status === 'ACTIVE';
                 })
                 
                 return request(app)
@@ -43,7 +43,7 @@ describe('all-employees Endpoints', function() {
                 .then(res => {
                     expect(res.body.length).to.eql(expectedResult.length);
                     res.body.forEach(employee => {
-                        expect(employee.Status === 'ACTIVE');
+                        expect(employee.status === 'ACTIVE');
                     });
                 })
             })

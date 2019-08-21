@@ -2,30 +2,30 @@ function makeEmployeesArray() {
     return [
         {
             id: 1,
-            FirstName: 'FirstNameOne',
-            MiddleInitial: 'A',
-            LastName: 'LastNameOne',
-            DateOfEmployment: '01/01/2019',
-            DateOfBirth: '01/01/2010',
-            Status: 'ACTIVE'
+            firstname: 'FirstNameOne',
+            middleinitial: 'A',
+            lastname: 'LastNameOne',
+            dateofemployment: '01/01/2019',
+            dateofbirth: '01/01/2010',
+            status: 'ACTIVE'
         },
         {
             id: 2,
-            FirstName: 'FirstNameTwo',
-            MiddleInitial: 'B',
-            LastName: 'LastNameTwo',
-            DateOfEmployment: '02/02/2019',
-            DateOfBirth: '02/02/2010',
-            Status: 'ACTIVE'
+            firstname: 'FirstNameTwo',
+            middleinitial: 'B',
+            lastname: 'LastNameTwo',
+            dateofemployment: '02/02/2019',
+            dateofbirth: '02/02/2010',
+            status: 'ACTIVE'
         },
         {
             id: 3,
-            FirstName: 'FirstNameThree',
-            MiddleInitial: 'C',
-            LastName: 'LastNameThree',
-            DateOfEmployment: '03/03/2019',
-            DateOfBirth: '03/03/2010',
-            Status: 'INACTIVE'
+            firstname: 'FirstNameThree',
+            middleinitial: 'C',
+            lastname: 'LastNameThree',
+            dateofemployment: '03/03/2019',
+            dateofbirth: '03/03/2010',
+            status: 'INACTIVE'
         },
     ]
 }
@@ -41,6 +41,7 @@ function seedEmployees(db, employees) {
     const preppedEmployees = employees.map(employee => {
         const employeeInfo = Object.assign({}, employee);
         delete employeeInfo.id;
+        return employeeInfo;
     })
     return db
         .into('employees')
