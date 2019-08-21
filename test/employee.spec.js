@@ -7,6 +7,7 @@ describe('employee Endpoints', function() {
 
     const testEmployees = helpers.makeEmployeesArray();
     const testEmployee = testEmployees[0];
+    const newEmployee = helpers.makeNewEmployee();
 
     before('make knex instance', () => {
         db = knex({
@@ -23,14 +24,14 @@ describe('employee Endpoints', function() {
 
     afterEach('cleanup', async function () {return await helpers.cleanTables(db)});
 
-    describe('GET /api/employee/employee_id', () => {
-        beforeEach('insert employees', async function () {
-            return await helpers.seedEmployees(
-                db,
-                testEmployees
-            );
-        });
+    beforeEach('insert employees', async function () {
+        return await helpers.seedEmployees(
+            db,
+            testEmployees
+        );
+    });
 
+    describe('GET /api/employee/employee_id', () => {
         context('Happy Path', () => {
             it('responds 200 and correct employee is returned', () => {
                 expectedEmployee = testEmployee;
@@ -79,6 +80,97 @@ describe('employee Endpoints', function() {
                     expect(res.body.message.length).to.eql(1);
                     expect(res.body.message[0]).to.eql(`Employee does not exists`);
                 })
+        })
+    })
+
+    describe('POST /api/employee/', () => {
+        context('happy path', () => {
+            const newId = testEmployees.length + 1;
+
+            it('Responds 200 and new employees is added to database with new id', () => {
+                return request(app)
+                .post(`/api/employee/`)
+                .send(newEmployee)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('employees')
+                        .where('id', newId)
+                        .select('id')
+                        .first()
+                        .then(res => {
+                            expect(res.id).to.eql(newId)
+                        })
+                })
+
+            })
+            it('Responds 200 and new employees default status is ACTIVE', () => {
+                return request(app)
+                .post(`/api/employee/`)
+                .send(newEmployee)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('employees')
+                        .where('id', newId)
+                        .select('status')
+                        .first()
+                        .then(res => {
+                            expect(res.status).to.eql('ACTIVE');
+                        })
+                })
+            })
+        })
+
+        context('Required fields missing', () => {
+            const requiredFields = {'firstname': 'First Name', 'lastname': 'Last Name', 'dateofemployment': 'Date of Employment'};
+
+            for (let [key, value] of Object.entries(requiredFields)) {
+                it(`Responds 400 when ${key} is missing from body`, () => {
+                    const missingFieldsEmployee = Object.assign({}, newEmployee);
+
+                    delete missingFieldsEmployee[key];
+
+                    return request(app)
+                    .post(`/api/employee/`)
+                    .send(missingFieldsEmployee)
+                    .expect(400)
+                    .then(res => {
+                        expect(res.body.message[0]).to.eql(`${value} is required`);
+                    })
+                })
+                it(`Responds 400 when ${key} is undefined`, () => {
+                    const missingFieldsEmployee = Object.assign({}, newEmployee);
+
+                    missingFieldsEmployee[key] = '';
+
+                    return request(app)
+                    .post(`/api/employee/`)
+                    .send(missingFieldsEmployee)
+                    .expect(400)
+                    .then(res => {
+                        expect(res.body.message[0]).to.eql(`${value} is required`);
+                    })
+                })
+            }
+        })
+        context('Date format in body is invalid', () => {
+            const dateFields = ['dateofbirth', 'dateofemployment'];
+            dateFields.forEach(dateKey => {
+                it('Reponds 400 when date is in an invalid format', () => {
+                    const badDateEmployee = Object.assign({}, newEmployee);
+    
+                    badDateEmployee[dateKey] = '13/01/2000';
+
+                    return request(app)
+                    .post(`/api/employee/`)
+                    .send(badDateEmployee)
+                    .expect(400)
+                    .then(res => {
+                        expect(res.body.message[0]).to.eql(`${dateKey} is invalid make sure it is in MM/DD/YYYY format`);
+                    })
+                })
+            })
         })
     })
 })

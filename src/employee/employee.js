@@ -1,6 +1,8 @@
 const express = require('express');
 const employeeService = require('./employee-service');
 
+const jsonBodyParser = express.json();
+
 const employeeRouter = express.Router();
 
 employeeRouter
@@ -27,6 +29,34 @@ employeeRouter
         .catch(error => {
             next(error);
         })
+    })
+
+employeeRouter
+    .route('')
+    .post(jsonBodyParser, (req, res, next) => {
+        const db = req.app.get('db');
+        const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
+        const newEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
+
+        const errorMessages = employeeService.validateNewEmployee(newEmployee);
+
+        if (errorMessages.length > 0) {
+            return res.status(400).json({
+                message: errorMessages
+            })
+        }
+        else {
+            employeeService.postNewEmployee(newEmployee, db)
+            .then(newEmployeeId => {
+                res.status(200).json(
+                    newEmployeeId
+                )
+            })
+            .catch(error => {
+                next(error);
+            })
+        }
+
     })
 
 module.exports = employeeRouter;

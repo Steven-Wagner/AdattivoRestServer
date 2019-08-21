@@ -30,6 +30,16 @@ function makeEmployeesArray() {
     ]
 }
 
+function makeNewEmployee() {
+    return {
+        firstname: 'newFirstName',
+        middleinitial: 'D',
+        lastname: 'newLastName',
+        dateofbirth: '04/04/2004',
+        dateofemployment: '05/05/2005',
+    }
+}
+
 function cleanTables(db) {
     return db.raw(
     `TRUNCATE
@@ -51,5 +61,6 @@ function seedEmployees(db, employees) {
 module.exports = {
     makeEmployeesArray,
     cleanTables,
-    seedEmployees
+    seedEmployees,
+    makeNewEmployee
 }
