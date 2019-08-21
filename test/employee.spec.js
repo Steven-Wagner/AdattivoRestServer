@@ -120,6 +120,28 @@ describe('employee Endpoints', function() {
                         })
                 })
             })
+
+            it('Responds 200 and middleinitial is capitalized', () => {
+                const lowerCaseInitialEmployee = Object.assign({}, newEmployee);
+                const newInitial = 'a';
+                lowerCaseInitialEmployee.middleinitial = newInitial;
+                const newEmployeeId = testEmployees.length+1;
+
+                return request(app)
+                .post(`/api/employee/`)
+                .send(lowerCaseInitialEmployee)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('employees')
+                        .where('id', newEmployeeId)
+                        .select('middleinitial')
+                        .first()
+                        .then(res => {
+                            expect(res.middleinitial).to.eql(newInitial.toUpperCase())
+                        })
+                })
+            })
         })
 
         context('Required fields missing', () => {
@@ -169,6 +191,67 @@ describe('employee Endpoints', function() {
                     .then(res => {
                         expect(res.body.message[0]).to.eql(`${dateKey} is invalid make sure it is in MM/DD/YYYY format`);
                     })
+                })
+            })
+        })
+
+        context('Name fields are over 50 chracters', () => {
+            const nameFields = {'firstname':'First Name', 'lastname': 'Last Name'};
+
+            for (let [key, value] of Object.entries(nameFields)) {
+                it(`Reponds 400 when ${key} is longer that 50 characters`, () => {
+                    const badNameEmployee = Object.assign({}, newEmployee);
+                    badNameEmployee[key] = helpers.makeRandomString(51);
+
+                    return request(app)
+                    .post(`/api/employee/`)
+                    .send(badNameEmployee)
+                    .expect(400)
+                    .then(res => {
+                        expect(res.body.message[0]).to.eql(`${value} must be less than 50 characters`);
+                    })
+                })
+            }
+        })
+        context('Middle initial validates correctly', () => {
+            it('Responds 400 when middle initial is not a letter from a-z', () => {
+                const badInitialEmployee = Object.assign({}, newEmployee);
+                badInitialEmployee.middleinitial = '2';
+
+                return request(app)
+                .post(`/api/employee/`)
+                .send(badInitialEmployee)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message[0]).to.eql('Middle Initial must be a letter from A-Z');
+                })
+            })
+            it('Responds 400 when middle initials length is > 1', () => {
+                const badInitialEmployee = Object.assign({}, newEmployee);
+                badInitialEmployee.middleinitial = 'ab';
+
+                return request(app)
+                .post(`/api/employee/`)
+                .send(badInitialEmployee)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message[0]).to.eql('Middle Initial must be one character in length');
+                })
+            })
+        })
+        context('Responds with multiple error messages', () => {
+            it('Responds with 400 and multiple error messages when all required fields are missing', () => {
+                const noRequiredFieldsEmployee = Object.assign({}, newEmployee);
+                noRequiredFieldsEmployee.firstname = '';
+                noRequiredFieldsEmployee.lastname = '';
+                noRequiredFieldsEmployee.dateofemployment = '';
+
+                return request(app)
+                .post(`/api/employee/`)
+                .send(noRequiredFieldsEmployee)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message).to.have.length(4);
                 })
             })
         })

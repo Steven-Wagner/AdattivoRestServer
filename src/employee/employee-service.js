@@ -49,7 +49,7 @@ const employeeService = {
             errorMessages.push('Middle Initial must be one character in length');
         }
         //initial must be a letter
-        if (!employee.middleinitial.match(/[A-Z]/i)) {
+        if (!employee.middleinitial.match(/[A-Z|a-z]/i)) {
             errorMessages.push('Middle Initial must be a letter from A-Z')
         }
         return errorMessages;
@@ -87,6 +87,10 @@ const employeeService = {
         return errorMessages;
     },
     postNewEmployee(employee, db) {
+        //make sure that middleinitial is capitalized
+        employee.middleinitial = employee.middleinitial.toUpperCase();
+
+        //insert new employee into employees table
         return db
             .from('employees')
             .insert(
