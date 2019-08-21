@@ -30,6 +30,30 @@ employeeRouter
             next(error);
         })
     })
+    .patch(jsonBodyParser, (req, res, next) => {
+        const db = req.app.get('db');
+        const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
+        const updatedEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
+        const employeeId = req.params.employee_id;
+
+        return employeeService.validateUpdateEmployee(employeeId, updatedEmployee, db)
+        .then(errorMessages => {
+            if (errorMessages.length > 0) {
+                res.status(400).json({
+                    message: errorMessages
+                })
+            }
+            else {
+                return employeeService.updateEmployee(employeeId, updatedEmployee, db)
+                .then(() => {
+                    res.status(204).json();
+                })
+            }
+        })
+        .catch(error => {
+            next(error);
+        })
+    })
 
 employeeRouter
     .route('')

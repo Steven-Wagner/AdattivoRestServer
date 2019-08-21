@@ -45,12 +45,14 @@ const employeeService = {
         return errorMessages;
     },
     validateMiddleInitial(employee, errorMessages) {
-        if (employee.middleinitial.length > 1) {
-            errorMessages.push('Middle Initial must be one character in length');
-        }
-        //initial must be a letter
-        if (!employee.middleinitial.match(/[A-Z|a-z]/i)) {
-            errorMessages.push('Middle Initial must be a letter from A-Z')
+        if (employee.middleinitial) {
+            if (employee.middleinitial.length > 1) {
+                errorMessages.push('Middle Initial must be one character in length');
+            }
+            //initial must be a letter or undefined
+            if (!employee.middleinitial.match(/[A-Z|a-z| ]/i)) {
+                errorMessages.push('Middle Initial must be a letter from A-Z')
+            }
         }
         return errorMessages;
     },
@@ -58,17 +60,21 @@ const employeeService = {
         const dateKeysToCheck = ['dateofemployment', 'dateofbirth'];
         
         dateKeysToCheck.forEach(date => {
-            if (!moment(employee[date], "MM/DD/YYYY", true).isValid()) {
-                errorMessages.push(`${date} is invalid make sure it is in MM/DD/YYYY format`)
+            if (employee[date]) {
+                if (!moment(employee[date], "MM/DD/YYYY", true).isValid()) {
+                    errorMessages.push(`${date} is invalid make sure it is in MM/DD/YYYY format`)
+                }
             }
         })
         return errorMessages;
     },
     validateNamesAreNotTooLong(employee, errorMessages) {
-        if (employee.firstname && employee.lastname) {
+        if (employee.firstname) {
             if (employee.firstname.length > 50) {
                 errorMessages.push('First Name must be less than 50 characters')
             }
+        }
+        if (employee.lastname) {
             if (employee.lastname.length > 50) {
                 errorMessages.push('Last Name must be less than 50 characters')
             }
@@ -97,6 +103,45 @@ const employeeService = {
                 employee
             )
             .returning('id')
+    },
+    validateUpdateEmployee(employeeId, updatedEmployee, db) {
+        let errorMessages = [];
+
+        return this.getEmployeeById(employeeId, db)
+        .then(oldEmployee => {
+            if (!oldEmployee) {
+                //If employee does not exists immediately return error 
+                errorMessages.push('Employee id does not exists');
+                return errorMessages;
+            }
+            if (updatedEmployee.status === 'INACTIVE') {
+                //Can not update employee.status to INACTIVE
+                errorMessages.push(`Can not update employee to INACTIVE. Try to delete employee instead`)
+                return errorMessages;
+            }
+
+            errorMessages = this.validateNamesAreNotTooLong(updatedEmployee, errorMessages);
+            errorMessages = this.validateMiddleInitial(updatedEmployee, errorMessages);
+            errorMessages = this.validateDatesAreValid(updatedEmployee, errorMessages);
+
+            return errorMessages;
+        })
+        .catch(error => {
+            return error;
+        })
+    },
+    updateEmployee(employeeId, employee, db) {
+        return db
+            .from('employees')
+            .where('id', employeeId)
+            .update({
+                firstname: employee.firstname,
+                lastname: employee.lastname,
+                middleinitial: employee.middleinitial,
+                dateofemployment: employee.dateofemployment,
+                dateofbirth: employee.dateofbirth,
+                status: employee.status
+            })
     }
 }
 

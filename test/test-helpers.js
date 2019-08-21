@@ -40,6 +40,16 @@ function makeNewEmployee() {
     }
 }
 
+function makeUpdatedEmployeeData() {
+    return {
+        firstname: 'updatedFirstName',
+        middleinitial: 'U',
+        lastname: 'updatedLastName',
+        dateofbirth: '12/12/2012',
+        dateofemployment: '12/25/2005',
+    }
+}
+
 function cleanTables(db) {
     return db.raw(
     `TRUNCATE
@@ -74,5 +84,6 @@ module.exports = {
     cleanTables,
     seedEmployees,
     makeNewEmployee,
-    makeRandomString
+    makeRandomString,
+    makeUpdatedEmployeeData
 }

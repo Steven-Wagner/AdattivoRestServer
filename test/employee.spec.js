@@ -251,8 +251,113 @@ describe('employee Endpoints', function() {
                 .send(noRequiredFieldsEmployee)
                 .expect(400)
                 .then(res => {
-                    expect(res.body.message).to.have.length(4);
+                    expect(res.body.message).to.have.length(3);
                 })
+            })
+        })
+    })
+
+    describe('PATCH /api/employee/:employee_id', () => {
+        context('happy path', () => {
+            const columnsToChange = {'firstname': 'First Name', 'lastname': 'Last Name', 'dateofemployment': 'Date of Employment', 'dateofbirth': 'Date of Birth', 'middleinitial': 'Middle Initial'};
+            for (let [key, value] of Object.entries(columnsToChange)) {
+                it(`Responds 204 and employee's ${key} is changed`, () => {
+                    const employeeId = testEmployee.id;
+                    const updatedEmployee = helpers.makeUpdatedEmployeeData();
+
+                    const columnToUpdate = {};
+                    columnToUpdate[key] = updatedEmployee[key];
+
+                    return request(app)
+                    .patch(`/api/employee/${employeeId}/`)
+                    .send(columnToUpdate)
+                    .expect(204)
+                    .then(() => {
+                        return db
+                            .from('employees')
+                            .where('id', employeeId)
+                            .select(key)
+                            .first()
+                            .then(res => {
+                                if (key === 'dateofbirth' || key === 'dateofemployment') {
+                                    expect(new Date(res[key])).to.eql(new Date(columnToUpdate[key]));
+                                }
+                                else {
+                                    expect(res[key]).to.eql(columnToUpdate[key])
+                                }
+                            })
+                    })
+                })
+            }
+        })
+        context('Validate dates', () => {
+            const dateColumns = ['dateofemployment', 'dateofbirth'];
+
+            for (let date of dateColumns) {
+                it(`Responds 400 when ${date} is invalid`, () => {
+                    const employeeId = testEmployee.id;
+
+                    const columnToUpdate = {};
+                    columnToUpdate[date] = '13/32/1234';
+
+                    return request(app)
+                        .patch(`/api/employee/${employeeId}/`)
+                        .send(columnToUpdate)
+                        .expect(400)
+                        .then((res) => {
+                            expect(res.body.message[0]).to.eql(`${date} is invalid make sure it is in MM/DD/YYYY format`)
+                        })
+                })
+            }
+        })
+        context('Validate names', () => {
+            const nameColumns = {'firstname': 'First Name', 'lastname': 'Last Name'};
+
+            for (let [columnName, prettyName] of Object.entries(nameColumns)) {
+                it(`Responds 400 when ${prettyName} is longer than 50 characters`, () => {
+                    const employeeId = testEmployee.id;
+
+                    const columnToUpdate = {};
+                    columnToUpdate[columnName] = helpers.makeRandomString(51);
+
+                    return request(app)
+                        .patch(`/api/employee/${employeeId}/`)
+                        .send(columnToUpdate)
+                        .expect(400)
+                        .then((res) => {
+                            expect(res.body.message[0]).to.eql(`${prettyName} must be less than 50 characters`)
+                        })
+                })
+            }
+        })
+        context('Validate middle initial', () => {
+            it(`Responds 400 when middleinitial is over 1 character in length`, () => {
+                const employeeId = testEmployee.id;
+
+                const columnToUpdate = {middleinitial: 'ab'};
+
+                return request(app)
+                    .patch(`/api/employee/${employeeId}/`)
+                    .send(columnToUpdate)
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.message[0]).to.eql('Middle Initial must be one character in length')
+                    })
+        
+            })
+            it(`Responds 400 when middleinitial is not a letter`, () => {
+                const employeeId = testEmployee.id;
+
+                const columnToUpdate = {middleinitial: '3'};
+
+                return request(app)
+                    .patch(`/api/employee/${employeeId}/`)
+                    .send(columnToUpdate)
+                    .expect(400)
+                    .then((res) => {
+                        expect(res.body.message[0]).to.eql('Middle Initial must be a letter from A-Z')
+                    })
+        
             })
         })
     })
