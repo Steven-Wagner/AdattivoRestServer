@@ -1,5 +1,6 @@
 const express = require('express');
 const employeeService = require('./employee-service');
+const {requireAuth} = require('../middleware/require-auth');
 
 const jsonBodyParser = express.json();
 
@@ -61,6 +62,22 @@ employeeRouter
     .delete((req, res, next) => { 
         const db = req.app.get('db');
         employeeId = req.params.employee_id;
+
+        employeeService.validateEmployeeDelete(employeeId, db)
+        .then(errorMessages => {
+            if (errorMessages.length > 0) {
+                return res.status(400).json({
+                    message: errorMessages
+                })
+            }
+            employeeService.deleteEmployee(employeeId, db)
+            .then(id => {
+                res.status(204).json()
+            })
+        })
+        .catch(error => {
+            next(error);
+        })
     })
 
 employeeRouter

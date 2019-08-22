@@ -383,4 +383,56 @@ describe('employee Endpoints', function() {
                 })
         })
     })
+
+    describe('DELETE /api/employee/:employee_id', () => {
+        context('Happy path', () => {
+            it('Responds 204 and users status is set to INACTIVE', () => {
+                const employeeToDelete = testEmployee;
+                const employeeId = employeeToDelete.id;
+
+                return request(app)
+                .delete(`/api/employee/${employeeId}/`)
+                .set('Authorization', process.env.PASSWORD)
+                .expect(204)
+                .then((res) => {
+                    return db
+                        .from('employees')
+                        .where('id', employeeId)
+                        .select('status')
+                        .first()
+                        .then(res => {
+                            expect(res.status).to.eql('INACTIVE')
+                        })
+                })
+            })
+        })
+        context('Validate delete', () => {
+            it('Responds 401 when wrong password is in authorization header', () => {
+                const wrongPassword = 'wrongpassword';
+                const employeeId = testEmployee.id;
+
+                return request(app)
+                .delete(`/api/employee/${employeeId}/`)
+                .set('Authorization', wrongPassword)
+                .expect(401)
+                .then(res => {
+                    expect(res.body.message).to.eql('Unauthorized request');
+                })
+            })
+            it('Responds 400 when employee is already INACTIVE', () => {
+                const employeeDeleted = testEmployees.find(employee => {
+                    return employee.status === 'INACTIVE';
+                })
+                const employeeId = employeeDeleted.id;
+
+                return request(app)
+                .delete(`/api/employee/${employeeId}/`)
+                .set('Authorization', process.env.PASSWORD)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message[0]).to.eql('Employee is already deleted');
+                })
+            })
+        })
+    })
 })

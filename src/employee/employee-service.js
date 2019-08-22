@@ -154,6 +154,29 @@ const employeeService = {
                 dateofbirth: employee.dateofbirth,
                 status: employee.status
             })
+    },
+    async validateEmployeeDelete(employeeId, db) {
+        let errorMessages = [];
+
+        const employee = await this.getEmployeeById(employeeId, db)
+        if (!employee) {
+            errorMessages.push('Employee does not exist')
+            return errorMessages;
+        }
+        if (employee.status === 'INACTIVE') {
+            errorMessages.push('Employee is already deleted');
+            return errorMessages;
+        }
+
+        return errorMessages;
+    },
+    deleteEmployee(employeeId, db) {
+        return db
+            .from('employees')
+            .where('id', employeeId)
+            .update({
+                status: 'INACTIVE'
+            })
     }
 }
 
