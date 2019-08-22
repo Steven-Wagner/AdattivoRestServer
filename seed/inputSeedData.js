@@ -1,3 +1,4 @@
+require('dotenv').config();
 const seedData = require('./seedData');
 const knex = require('knex');
 const {DB_URL} = require('../src/config');
@@ -11,6 +12,9 @@ function seedEmployees(db, employees) {
     return db
         .into('employees')
         .insert(employees)
+        .catch(error => {
+            console.log('seed', error);
+        })
 }
 
 function cleanTables(db) {
@@ -18,8 +22,17 @@ function cleanTables(db) {
     `TRUNCATE
         employees
         RESTART IDENTITY CASCADE`)
+        .catch(error => {
+            throw(error);
+        })
+
 }
 
-cleanTables(db);
-
-seedEmployees(db, seedData);
+cleanTables(db)
+.then(() => {
+    console.log('getting here')
+    return seedEmployees(db, seedData)
+    .then(() => {
+        console.log(`Data has been seeded at ${DB_URL}`);
+    })
+})
