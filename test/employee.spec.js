@@ -357,8 +357,30 @@ describe('employee Endpoints', function() {
                     .then((res) => {
                         expect(res.body.message[0]).to.eql('Middle Initial must be a letter from A-Z')
                     })
-        
             })
+        })
+        it('Responds 400 when there are no fields in the body', () => {
+            const employeeId = testEmployee.id;
+
+            return request(app)
+                .patch(`/api/employee/${employeeId}/`)
+                .send('')
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.message[0]).to.eql('Update is missing any content')
+                })
+        })
+        it('Responds 400 when user attempts to update employee to INACTIVE', () => {
+            const employeeId = testEmployee.id;
+            const statusColumn = {status: 'INACTIVE'};
+
+            return request(app)
+                .patch(`/api/employee/${employeeId}/`)
+                .send(statusColumn)
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.message[0]).to.eql(`Can not update employee to INACTIVE. Try to delete employee instead`)
+                })
         })
     })
 })
