@@ -13,4 +13,13 @@ function seedEmployees(db, employees) {
         .insert(employees)
 }
 
+function cleanTables(db) {
+    return db.raw(
+    `TRUNCATE
+        employees
+        RESTART IDENTITY CASCADE`)
+}
+
+cleanTables(db);
+
 seedEmployees(db, seedData);
