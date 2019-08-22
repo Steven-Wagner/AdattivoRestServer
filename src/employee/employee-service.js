@@ -96,6 +96,9 @@ const employeeService = {
         //make sure that middleinitial is capitalized
         employee.middleinitial = employee.middleinitial.toUpperCase();
 
+        //Make sure that first letter of first and last name is captalized
+        this.capitalizeNames(employee);
+
         //insert new employee into employees table
         return db
             .from('employees')
@@ -103,6 +106,14 @@ const employeeService = {
                 employee
             )
             .returning('id')
+    },
+    capitalizeNames(employee) {
+        if (employee.firstname) {
+            employee.firstname = employee.firstname.charAt(0).toUpperCase() + employee.firstname.substring(1);
+        }
+        if (employee.lastname) {
+            employee.lastname = employee.lastname.charAt(0).toUpperCase() + employee.lastname.substring(1);
+        }  
     },
     async validateUpdateEmployee(employeeId, updatedEmployee, db) {
         let errorMessages = [];
@@ -143,6 +154,8 @@ const employeeService = {
     },
 
     updateEmployee(employeeId, employee, db) {
+        this.capitalizeNames(employee);
+
         return db
             .from('employees')
             .where('id', employeeId)

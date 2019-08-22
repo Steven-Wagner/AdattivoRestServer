@@ -32,9 +32,9 @@ function makeEmployeesArray() {
 
 function makeNewEmployee() {
     return {
-        firstname: 'newFirstName',
+        firstname: 'NewFirstName',
         middleinitial: 'D',
-        lastname: 'newLastName',
+        lastname: 'NewLastName',
         dateofbirth: '04/04/2004',
         dateofemployment: '05/05/2005',
     }
@@ -42,9 +42,9 @@ function makeNewEmployee() {
 
 function makeUpdatedEmployeeData() {
     return {
-        firstname: 'updatedFirstName',
+        firstname: 'UpdatedFirstName',
         middleinitial: 'U',
-        lastname: 'updatedLastName',
+        lastname: 'UpdatedLastName',
         dateofbirth: '12/12/2012',
         dateofemployment: '12/25/2005',
     }
@@ -79,11 +79,21 @@ function makeRandomString(length) {
     return text;
 }
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.substring(1);
+}
+
+function unCapitalizeFirstLetter(string) {
+    return string.charAt(0).toLowerCase() + string.substring(1);
+}
+
 module.exports = {
     makeEmployeesArray,
     cleanTables,
     seedEmployees,
     makeNewEmployee,
     makeRandomString,
-    makeUpdatedEmployeeData
+    makeUpdatedEmployeeData,
+    capitalizeFirstLetter,
+    unCapitalizeFirstLetter
 }

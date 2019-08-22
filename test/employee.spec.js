@@ -289,6 +289,32 @@ describe('employee Endpoints', function() {
                     })
                 })
             }
+            context('First and last name are capitalized', () => {
+                const nameColumns = ['firstname', 'lastname'];
+
+                for (let name of nameColumns) {
+                    it(`${name} is capitalized`, () => {
+                        const employeeId = testEmployee.id;
+                        const updatedEmployee = helpers.makeUpdatedEmployeeData();
+                        updatedEmployee[name] = helpers.unCapitalizeFirstLetter(updatedEmployee[name]);
+
+                        return request(app)
+                        .patch(`/api/employee/${employeeId}/`)
+                        .send(updatedEmployee)
+                        .expect(204)
+                        .then(() => {
+                            return db
+                                .from('employees')
+                                .where('id', employeeId)
+                                .select(name)
+                                .first()
+                                .then(res => {
+                                    expect(res[name]).to.eql(helpers.capitalizeFirstLetter(updatedEmployee[name]))
+                                })
+                        })
+                    })
+                }
+            })
         })
         context('Validate dates', () => {
             const dateColumns = ['dateofemployment', 'dateofbirth'];
