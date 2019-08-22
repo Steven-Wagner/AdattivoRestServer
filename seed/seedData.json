@@ -1,0 +1,34 @@
+[   
+    {
+        "firstname": "Larry",
+        "middleinitial": "A",
+        "lastname": "Fine",
+        "dateofemployment": "03/16/1969",
+        "dateofbirth": "01/01/1925",
+        "status": "ACTIVE"
+    },
+    {
+        "firstname": "Curly",
+        "middleinitial": "B",
+        "lastname": "Howard",
+        "dateofemployment": "07/03/1947",
+        "dateofbirth": "06/01/1925",
+        "status": "ACTIVE"
+    },
+    {
+        "firstname": "Moe",
+        "middleinitial": "C",
+        "lastname": "Howard",
+        "dateofemployment": "12/25/1972",
+        "dateofbirth": "08/28/1932",
+        "status": "ACTIVE"
+    },
+    {
+        "firstname": "Nessie",
+        "middleinitial": "W",
+        "lastname": "Bigfoot",
+        "dateofemployment": "02/13/1867",
+        "dateofbirth": "11/20/0010",
+        "status": "INACTIVE"
+    }
+]
