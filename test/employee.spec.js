@@ -91,7 +91,7 @@ describe('employee Endpoints', function() {
                 return request(app)
                 .post(`/api/employee/`)
                 .send(newEmployee)
-                .expect(200)
+                .expect(201)
                 .then(res => {
                     return db
                         .from('employees')
@@ -108,7 +108,7 @@ describe('employee Endpoints', function() {
                 return request(app)
                 .post(`/api/employee/`)
                 .send(newEmployee)
-                .expect(200)
+                .expect(201)
                 .then(res => {
                     return db
                         .from('employees')
@@ -130,7 +130,7 @@ describe('employee Endpoints', function() {
                 return request(app)
                 .post(`/api/employee/`)
                 .send(lowerCaseInitialEmployee)
-                .expect(200)
+                .expect(201)
                 .then(res => {
                     return db
                         .from('employees')

@@ -97,7 +97,7 @@ employeeRouter
         else {
             employeeService.postNewEmployee(newEmployee, db)
             .then(newEmployeeId => {
-                res.status(200).json(
+                res.status(201).json(
                     newEmployeeId
                 )
             })
