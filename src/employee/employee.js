@@ -56,6 +56,14 @@ employeeRouter
     })
 
 employeeRouter
+    .route('/:employee_id')
+    .all(requireAuth)
+    .delete((req, res, next) => { 
+        const db = req.app.get('db');
+        employeeId = req.params.employee_id;
+    })
+
+employeeRouter
     .route('')
     .post(jsonBodyParser, (req, res, next) => {
         const db = req.app.get('db');
