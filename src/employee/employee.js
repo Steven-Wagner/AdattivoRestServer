@@ -87,25 +87,26 @@ employeeRouter
         const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
         const newEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
 
-        const errorMessages = employeeService.validateNewEmployee(newEmployee);
-
-        if (errorMessages.length > 0) {
-            return res.status(400).json({
-                message: errorMessages
-            })
-        }
-        else {
-            employeeService.postNewEmployee(newEmployee, db)
-            .then(newEmployeeId => {
-                res.status(201).json(
-                    newEmployeeId
-                )
-            })
-            .catch(error => {
-                next(error);
-            })
-        }
-
+        
+        employeeService.validateNewEmployee(newEmployee, db)
+        .then(errorMessages => {
+            if (errorMessages.length > 0) {
+                return res.status(400).json({
+                    message: errorMessages
+                })
+            }
+            else {
+                employeeService.postNewEmployee(newEmployee, db)
+                .then(newEmployeeId => {
+                    res.status(201).json(
+                        newEmployeeId
+                    )
+                })
+            }
+        })
+        .catch(error => {
+            next(error);
+        })
     })
 
 module.exports = employeeRouter;

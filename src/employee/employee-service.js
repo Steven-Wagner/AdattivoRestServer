@@ -31,7 +31,7 @@ const employeeService = {
             .first()
     },
 
-    validateNewEmployee(employee) {
+    async validateNewEmployee(employee, db) {
         let errorMessages = [];
 
         errorMessages = this.validateRequiredFields(employee, errorMessages);
@@ -42,7 +42,28 @@ const employeeService = {
 
         errorMessages = this.validateMiddleInitial(employee, errorMessages);
 
+        if (errorMessages.length < 1) {
+            errorMessages = await this.validateDuplicate(employee, errorMessages, db);
+        }
+
         return errorMessages;
+    },
+    validateDuplicate(employee, errorMessages, db) {
+        return db
+            .from('employees')
+            .where('firstname', employee.firstname)
+            .andWhere('lastname', employee.lastname)
+            .andWhere('dateofbirth', employee.dateofbirth)
+            .andWhere('dateofemployment', employee.dateofemployment)
+            .andWhere('middleinitial', employee.middleinitial)
+            .first()
+            .then(res => {
+                if (res) {
+                    errorMessages.push('Employee already exists');
+                }
+                return errorMessages;
+            })
+
     },
     validateMiddleInitial(employee, errorMessages) {
         if (employee.middleinitial) {

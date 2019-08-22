@@ -255,6 +255,17 @@ describe('employee Endpoints', function() {
                 })
             })
         })
+        it('Repsonds 400 when employee is a duplicate', () => {
+            const duplicateEmployee = testEmployee;
+            
+            return request(app)
+            .post(`/api/employee/`)
+            .send(duplicateEmployee)
+            .expect(400)
+            .then(res => {
+                expect(res.body.message[0]).to.eql('Employee already exists');
+            })
+        })
     })
 
     describe('PATCH /api/employee/:employee_id', () => {
