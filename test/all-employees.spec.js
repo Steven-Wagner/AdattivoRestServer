@@ -50,7 +50,7 @@ describe('all-employees Endpoints', function() {
             context('Dates are returned in correct format', () => {
                 const dateColumns = ['dateofbirth', 'dateofemployment'];
                 dateColumns.forEach(dateColumn => {
-                    it.only(`${dateColumn} is returned in correct format`, () => {
+                    it(`${dateColumn} is returned in correct format`, () => {
                         return request(app)
                         .get(`/api/all-employees/`)
                         .then(res => {
