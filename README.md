@@ -13,11 +13,12 @@
 * One for test enviroment
 * One for a mock production/staging enviroment
 
+More information can be viewed here [postgreSQL Documentation](https://www.postgresql.org/docs/current/app-createdb.html)
+
 2. Rename the `example.env` file with `mv example.env .env`
 
 3. Add values to `.env` file. Replace all bracketed code with appropriate values, utilizing the 2 databases you created:
 ```
-NODE_ENV=development
 PORT=8000
 TEST_DB_URL=[url to your test database e.g."postgresql://user:password@localhost/databaseName"]
 DB_URL=[url to your staging/production database e.g."postgresql://user:password@localhost/databaseName"]
@@ -119,10 +120,9 @@ Body:
 {
     "firstname": [Required][Must be less than 51 characters in length][API will auto capitalize],
     "lastname": [Required][Must be less than 51 characters in length][API will auto capitalize],
-    "middleinitial": [Required][Must only be a letter A-Z|a-z, Must be 1 character in length][API will auto capitalize],
+    "middleinitial": [Optinal][Must only be a letter A-Z|a-z or undefined, Must be 1 character in length][API will auto capitalize],
     "dateofemployment": [Required][Must be in MM/DD/YYYY format],
     "dateofbirth": [Optinal][Must be in MM/DD/YYYY format],
-    "status": [Default="ACTIVE"][Values can only be "ACTIVE || "INACTIVE"]
 }
 ```
 
@@ -132,13 +132,14 @@ Returns Ex:
     "id": 7
 }
 ```
+Returns the id of the new employee
 
 ### PATCH new employee
 Endpoint: `http://localhost:8000/api/employee/:employee_id`
 
 employee_id param is the ID of the employee to PATCH
 
-Updates an existing employee. Must include at least one valid field in the req.body
+Updates an existing employee. Must include at least one valid field in the body
 
 Headers:
 * Content-Type: application/json
@@ -169,9 +170,21 @@ employee_id param is the ID of the employee to DELETE
 Deletes an employee by ID.
 
 Headers:
-* Authorization: [DELETE_EMPLOYEE_PASSWORD][default=password]
+* Authorization: password [Must have correct password. See DELETE_EMPLOYEE_PASSWORD variable in .env file]
 
 Returns Ex:
 ```
 Returns 204 No Content
 ```
+
+## Technologies Used
+
+Node.js
+Express.js
+postgreSQL
+knex
+postgrator
+Mocha
+Chai
+moment.js
+xss
