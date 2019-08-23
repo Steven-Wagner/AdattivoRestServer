@@ -1,5 +1,6 @@
 const express = require('express');
 const employeeService = require('./employee-service');
+const {serializeEmployee} = require('../utils/xss-functions');
 const {requireAuth} = require('../middleware/require-auth');
 
 const jsonBodyParser = express.json();
@@ -23,7 +24,7 @@ employeeRouter
             }
             else {
                 res.status(200).json(
-                    employee
+                    serializeEmployee(employee)
                 )
             }
         })
