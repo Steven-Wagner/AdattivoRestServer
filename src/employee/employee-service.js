@@ -23,7 +23,10 @@ const employeeService = {
         }
     },
 
-    getEmployeeById(employee_id, db) {
+    async getEmployeeById(employee_id, db) {
+        if (isNaN(employee_id)) {
+            return;
+        }
         return db
             .from('employees')
             .where('id', employee_id)

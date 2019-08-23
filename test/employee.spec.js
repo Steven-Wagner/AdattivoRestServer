@@ -81,6 +81,17 @@ describe('employee Endpoints', function() {
                     expect(res.body.message[0]).to.eql(`Employee does not exists`);
                 })
         })
+        it(`Responds 400 when employee id is not a number`, () => {
+            const notANumber = 'employee';
+
+            return request(app)
+                .get(`/api/employee/${notANumber}`)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message.length).to.eql(1);
+                    expect(res.body.message[0]).to.eql(`Employee does not exists`);
+                })
+        })
     })
 
     describe('POST /api/employee/', () => {
