@@ -1,4 +1,5 @@
 const express = require('express');
+const {serializeEmployee} = require('../utils/xss-functions');
 const allEmployeesService = require('./all-employees-service');
 
 const allEmployeesRouter = express.Router();
@@ -11,7 +12,7 @@ allEmployeesRouter
             allEmployeesService.getAllEmployees(db)
             .then(allEmployees => {
                 res.status(200).json(
-                    allEmployees
+                    allEmployees.map(employee => serializeEmployee(employee))
                 )
             })
             .catch(error => {
