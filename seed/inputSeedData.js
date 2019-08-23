@@ -8,31 +8,31 @@ const db = knex({
     connection: DB_URL
 })
 
-function seedEmployees(db, employees) {
-    return db
-        .into('employees')
-        .insert(employees)
-        .catch(error => {
-            console.log('seed', error);
-        })
-}
+console.log('db', DB_URL)
 
-function cleanTables(db) {
+const seedDatabase = new Promise(function(resolve, reject) {
     return db.raw(
-    `TRUNCATE
-        employees
-        RESTART IDENTITY CASCADE`)
-        .catch(error => {
-            throw(error);
-        })
-
-}
-
-cleanTables(db)
-.then(() => {
-    console.log('getting here')
-    return seedEmployees(db, seedData)
-    .then(() => {
-        console.log(`Data has been seeded at ${DB_URL}`);
-    })
+        `TRUNCATE
+            employees
+            RESTART IDENTITY CASCADE`)
+            .then(() => {
+                return db
+                .into('employees')
+                .insert(employees)
+                .then(() => {
+                    db.destroy();
+                    resolve();
+                })
+            })
+            .catch(error => {
+                db.destroy()
+                reject(error);
+            })
 })
+
+seedDatabase.then(() => {
+    console.log(`Data seeded at ${DB_URL}`)
+})
+.catch(error => {
+    console.log(error)
+});
