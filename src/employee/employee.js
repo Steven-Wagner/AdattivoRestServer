@@ -90,7 +90,8 @@ employeeRouter
         const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
         const newEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
 
-        
+        employeeService.trimEmployeeFields(newEmployee);
+
         employeeService.validateNewEmployee(newEmployee, db)
         .then(errorMessages => {
             if (errorMessages.length > 0) {

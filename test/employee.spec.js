@@ -133,7 +133,7 @@ describe('employee Endpoints', function() {
                 })
             })
 
-            it('Responds 200 and middleinitial is capitalized', () => {
+            it.only('Responds 200 and middleinitial is capitalized', () => {
                 const lowerCaseInitialEmployee = Object.assign({}, newEmployee);
                 const newInitial = 'a';
                 lowerCaseInitialEmployee.middleinitial = newInitial;
@@ -151,6 +151,29 @@ describe('employee Endpoints', function() {
                         .first()
                         .then(res => {
                             expect(res.middleinitial).to.eql(newInitial.toUpperCase())
+                        })
+                })
+            })
+            it.only('Trailing white space is removed from all feilds', () => {
+                const employeeId = testEmployee.id;
+                const newEmployee = Object.assign({}, testEmployee);
+                for (let [key, value] of Object.entries(newEmployee)) {
+                    newEmployee[key] = value+'  ';
+                }   
+                return request(app)
+                .post(`/api/employee/`)
+                .send(newEmployee)
+                .then(() => {
+                    return db
+                        .from('employees')
+                        .where('id', employeeId)
+                        .select('firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment')
+                        .first()
+                        .then(res => {
+                            const fieldsToCheck = ['firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment'];
+                            for (let field of fieldsToCheck) {
+                                expect(res[field]).to.eql(testEmployee[field]);
+                            }
                         })
                 })
             })
@@ -339,7 +362,7 @@ describe('employee Endpoints', function() {
                 }
             })
             context('Inputs are stripped of trailing white space', () => {
-                it.only('All feilds are stripped of trialing white space', () => {
+                it('All feilds are stripped of trialing white space', () => {
                     const employeeId = testEmployee.id;
                     const updatedEmployee = Object.assign({}, updatedFields);
                     for (let [key, value] of Object.entries(updatedEmployee)) {
