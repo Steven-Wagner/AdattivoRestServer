@@ -46,8 +46,8 @@ describe('employee Endpoints', function() {
                     expect(res.body.firstname).to.eql(expectedEmployee.firstname);
                     expect(res.body.lastname).to.eql(expectedEmployee.lastname);
                     expect(res.body.middleinitial).to.eql(expectedEmployee.middleinitial);
-                    expect(new Date(res.body.dateofemployment)).to.eql(new Date(expectedEmployee.dateofemployment));
-                    expect(new Date(res.body.dateofbirth)).to.eql(new Date(expectedEmployee.dateofbirth));
+                    expect(res.body.dateofemployment).to.eql(expectedEmployee.dateofemployment);
+                    expect(res.body.dateofbirth).to.eql(expectedEmployee.dateofbirth);
                 })
             })
         })
@@ -133,7 +133,7 @@ describe('employee Endpoints', function() {
                 })
             })
 
-            it.only('Responds 200 and middleinitial is capitalized', () => {
+            it('Responds 200 and middleinitial is capitalized', () => {
                 const lowerCaseInitialEmployee = Object.assign({}, newEmployee);
                 const newInitial = 'a';
                 lowerCaseInitialEmployee.middleinitial = newInitial;
@@ -154,7 +154,7 @@ describe('employee Endpoints', function() {
                         })
                 })
             })
-            it.only('Trailing white space is removed from all feilds', () => {
+            it('Trailing white space is removed from all feilds', () => {
                 const employeeId = testEmployee.id;
                 const newEmployee = Object.assign({}, testEmployee);
                 for (let [key, value] of Object.entries(newEmployee)) {
@@ -172,7 +172,12 @@ describe('employee Endpoints', function() {
                         .then(res => {
                             const fieldsToCheck = ['firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment'];
                             for (let field of fieldsToCheck) {
-                                expect(res[field]).to.eql(testEmployee[field]);
+                                if (field === 'dateofbirth' || field === 'dateofemployment') {
+                                    expect(new Date(res[field])).to.eql(new Date(testEmployee[field]));
+                                }
+                                else {
+                                    expect(res[field]).to.eql(testEmployee[field]);
+                                }
                             }
                         })
                 })

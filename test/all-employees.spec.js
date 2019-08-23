@@ -32,7 +32,7 @@ describe('all-employees Endpoints', function() {
         });
 
         context('Happy Path', () => {
-            it('responds 200 and all ACTIVE employees are returned', () => {
+            it('responds 200 and all INACTIVE employees are not returned', () => {
                 const expectedResult = testEmployees.filter(employee => {
                     return employee.status === 'ACTIVE';
                 })
@@ -43,8 +43,25 @@ describe('all-employees Endpoints', function() {
                 .then(res => {
                     expect(res.body.length).to.eql(expectedResult.length);
                     res.body.forEach(employee => {
-                        expect(employee.status === 'ACTIVE');
+                        expect(employee.status).to.eql('ACTIVE');
                     });
+                })
+            })
+            context('Dates are returned in correct format', () => {
+                const dateColumns = ['dateofbirth', 'dateofemployment'];
+                dateColumns.forEach(dateColumn => {
+                    it.only(`${dateColumn} is returned in correct format`, () => {
+                        return request(app)
+                        .get(`/api/all-employees/`)
+                        .then(res => {
+                            res.body.forEach(returnedEmployee => {
+                                const expectedEmployee = testEmployees.find(expectedEmployee => {
+                                    return expectedEmployee.id === returnedEmployee.id
+                                })
+                                expect(returnedEmployee[dateColumn]).to.eql(expectedEmployee[dateColumn])
+                            })
+                        });
+                    })
                 })
             })
         })

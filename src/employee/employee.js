@@ -1,6 +1,7 @@
 const express = require('express');
 const employeeService = require('./employee-service');
 const {serializeEmployee} = require('../utils/xss-functions');
+const {timeFunctions} = require('../utils/time-functions');
 const {requireAuth} = require('../middleware/require-auth');
 
 const jsonBodyParser = express.json();
@@ -23,6 +24,7 @@ employeeRouter
                 });
             }
             else {
+                timeFunctions.convertEmployeeDatesToMMDDYYYY(employee);
                 res.status(200).json(
                     serializeEmployee(employee)
                 )
