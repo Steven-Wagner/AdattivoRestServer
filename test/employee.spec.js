@@ -367,13 +367,12 @@ describe('employee Endpoints', function() {
                 }
             })
             context('Inputs are stripped of trailing white space', () => {
-                it('All feilds are stripped of trialing white space', () => {
+                it.only('All feilds are stripped of trialing white space', () => {
                     const employeeId = testEmployee.id;
                     const updatedEmployee = Object.assign({}, updatedFields);
                     for (let [key, value] of Object.entries(updatedEmployee)) {
                         updatedEmployee[key] = value+'  ';
                     }   
-                    console.log('updatedEmployee', updatedEmployee)
                     return request(app)
                     .patch(`/api/employee/${employeeId}/`)
                     .send(updatedEmployee)
@@ -387,7 +386,7 @@ describe('employee Endpoints', function() {
                             .then(res => {
                                 const fieldsToCheck = ['firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment'];
                                 for (let field of fieldsToCheck) {
-                                    expect(res[field]).to.eql(updatedFields[field]);
+                                    expect(new Date (res[field])).to.eql(new Date(updatedFields[field]));
                                 }
                             })
                     })
