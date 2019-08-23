@@ -4,11 +4,13 @@ const timeFunctions = {
         for (let date of valuesToFromat) {
             employee[date] = new Date(employee[date]);
             let day = employee[date].getDate();
-            if (day.length = 1) {
+            console.log('day',day)
+            if (day.toString().length === 1) {
+                console.log('day add 0', day.length)
                 day = `0${day}`;
             }
             let month = employee[date].getMonth()+1;
-            if (month.length = 1) {
+            if (month.toString().length === 1) {
                 month = `0${month}`;
             }
             const year = employee[date].getFullYear();

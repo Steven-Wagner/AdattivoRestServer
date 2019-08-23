@@ -27,6 +27,15 @@ function makeEmployeesArray() {
             dateofbirth: '03/03/2010',
             status: 'INACTIVE'
         },
+        {
+            id: 4,
+            firstname: 'FirstNameFour',
+            middleinitial: 'D',
+            lastname: 'LastNameFour',
+            dateofemployment: '12/12/2018',
+            dateofbirth: '10/15/2010',
+            status: 'ACTIVE'
+        },
     ]
 }
 
