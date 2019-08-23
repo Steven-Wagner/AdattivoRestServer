@@ -32,5 +32,5 @@ seedDatabase.then(() => {
 })
 .catch(error => {
     db.destroy();
-    console.log(error)
+    console.log(error.message)
 });
