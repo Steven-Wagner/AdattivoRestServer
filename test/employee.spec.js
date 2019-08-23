@@ -429,7 +429,7 @@ describe('employee Endpoints', function() {
 
                 return request(app)
                 .delete(`/api/employee/${employeeId}/`)
-                .set('Authorization', process.env.PASSWORD)
+                .set('Authorization', process.env.DELETE_EMPLOYEE_PASSWORD)
                 .expect(204)
                 .then((res) => {
                     return db
@@ -464,7 +464,7 @@ describe('employee Endpoints', function() {
 
                 return request(app)
                 .delete(`/api/employee/${employeeId}/`)
-                .set('Authorization', process.env.PASSWORD)
+                .set('Authorization', process.env.DELETE_EMPLOYEE_PASSWORD)
                 .expect(400)
                 .then(res => {
                     expect(res.body.message[0]).to.eql('Employee is already deleted');

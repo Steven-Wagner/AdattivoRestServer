@@ -1,7 +1,7 @@
 function requireAuth(req, res, next) {
     const submittedPassword = req.get('Authorization') || '';
         
-    if (submittedPassword !== process.env.PASSWORD) {
+    if (submittedPassword !== process.env.DELETE_EMPLOYEE_PASSWORD) {
         res.status(401).json({
             message: 'Unauthorized request'
         })
