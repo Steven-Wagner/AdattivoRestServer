@@ -8,19 +8,23 @@ const jsonBodyParser = express.json();
 
 const employeeRouter = express.Router();
 
+
+//-----GET all info about a single 'ACTIVE' employee by ID-----
+
 employeeRouter
     .route('/:employee_id')
     .get((req, res, next) => {
-        //GET all info about a single 'ACTIVE' employee by ID
+        //ID is passed from param; employee_id
         const db = req.app.get('db');
         const employee_id = req.params.employee_id;
 
-        //Get the employee by id from DB. Will return an employee or if no employee exsts will return undefined
+        //Get the employee by id from DB. Will return an employee or if no employee exists will return undefined
         employeeService.getEmployeeById(employee_id, db)
         .then(employee => {
             //
             errorMessages = employeeService.validateGetEmployee(employee)
             if (errorMessages.length > 0) {
+                //If there are errors. Returns a message that contains an array of all errors.
                 res.status(400).json({
                     message: errorMessages
                 });
@@ -36,22 +40,30 @@ employeeRouter
             next(error);
         })
     })
+
+
+//-----PATCH an employee by ID-----
+
     .patch(jsonBodyParser, (req, res, next) => {
+        //ID is passed from param; employee_id
         const db = req.app.get('db');
         const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
         const updatedEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
         const employeeId = req.params.employee_id;
 
+        //Remove any trailing white space of inputs
         employeeService.trimEmployeeFields(updatedEmployee);
 
         return employeeService.validateUpdateEmployee(employeeId, updatedEmployee, db)
         .then(errorMessages => {
             if (errorMessages.length > 0) {
+                //If there are errors. Returns a message that contains an array of all errors.
                 res.status(400).json({
                     message: errorMessages
                 })
             }
             else {
+                //Update the existing employee
                 return employeeService.updateEmployee(employeeId, updatedEmployee, db)
                 .then(() => {
                     res.status(204).json();
@@ -63,54 +75,68 @@ employeeRouter
         })
     })
 
-employeeRouter
-    .route('/:employee_id')
-    .all(requireAuth)
-    .delete((req, res, next) => { 
-        const db = req.app.get('db');
-        employeeId = req.params.employee_id;
 
-        employeeService.validateEmployeeDelete(employeeId, db)
+//-----POST a new user-----
+
+employeeRouter
+    .route('')
+    .post(jsonBodyParser, (req, res, next) => {
+        //POST a new user
+        const db = req.app.get('db');
+        const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
+        const newEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
+
+        //Trim any trailing white space in inputs
+        employeeService.trimEmployeeFields(newEmployee);
+
+        employeeService.validateNewEmployee(newEmployee, db)
         .then(errorMessages => {
             if (errorMessages.length > 0) {
+                //If there are errors. Returns a message that contains an array of all errors.
                 return res.status(400).json({
                     message: errorMessages
                 })
             }
-            employeeService.deleteEmployee(employeeId, db)
-            .then(id => {
-                res.status(204).json()
-            })
+            else {
+                //Insert the new employee
+                employeeService.postNewEmployee(newEmployee, db)
+                .then(newEmployeeId => {
+                    res.status(201).json(
+                        //Responds with the new employees id in format {id: theNewId}
+                        newEmployeeId
+                    )
+                })
+            }
         })
         .catch(error => {
             next(error);
         })
     })
 
+
+//-----DELETE an existsing user by ID-----
+
 employeeRouter
-    .route('')
-    .post(jsonBodyParser, (req, res, next) => {
+    .route('/:employee_id')
+    .all(requireAuth)
+    .delete((req, res, next) => { 
+        //ID is passed from param; employee_id
         const db = req.app.get('db');
-        const {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial} = req.body;
-        const newEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
+        employeeId = req.params.employee_id;
 
-        employeeService.trimEmployeeFields(newEmployee);
-
-        employeeService.validateNewEmployee(newEmployee, db)
+        employeeService.validateEmployeeDelete(employeeId, db)
         .then(errorMessages => {
             if (errorMessages.length > 0) {
+                //If there are errors. Returns a message that contains an array of all errors.
                 return res.status(400).json({
                     message: errorMessages
                 })
             }
-            else {
-                employeeService.postNewEmployee(newEmployee, db)
-                .then(newEmployeeId => {
-                    res.status(201).json(
-                        newEmployeeId
-                    )
-                })
-            }
+            //Deletes the employee from the database
+            employeeService.deleteEmployee(employeeId, db)
+            .then(id => {
+                res.status(204).json()
+            })
         })
         .catch(error => {
             next(error);
