@@ -179,12 +179,12 @@ Returns 204 No Content
 
 ## Technologies Used
 
-Node.js
-Express.js
-postgreSQL
-knex
-postgrator
-Mocha
-Chai
-moment.js
-xss
+* Node.js
+* Express.js
+* postgreSQL
+* knex
+* postgrator
+* Mocha
+* Chai
+* moment.js
+* xss
