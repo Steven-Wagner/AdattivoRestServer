@@ -8,8 +8,6 @@ const db = knex({
     connection: DB_URL
 })
 
-console.log('db', DB_URL)
-
 const seedDatabase = new Promise(function(resolve, reject) {
     return db.raw(
         `TRUNCATE
@@ -18,7 +16,7 @@ const seedDatabase = new Promise(function(resolve, reject) {
             .then(() => {
                 return db
                 .into('employees')
-                .insert(employees)
+                .insert(seedData)
                 .then(() => {
                     db.destroy();
                     resolve();
