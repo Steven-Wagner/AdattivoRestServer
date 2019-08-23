@@ -73,16 +73,16 @@ Returns Ex:
         "firstname": "Larry",
         "lastname": "Fine",
         "middleinitial": "A",
-        "dateofbirth": "Thu Jan 01 1925 00:00:00 GMT-0700 (Mountain Standard Time)",
-        "dateofemployment": "Sun Mar 16 1969 00:00:00 GMT-0700 (Mountain Daylight Time)"
+        "dateofbirth": "01/01/1925",
+        "dateofemployment": "03/16/1969"
     },
     {
         "id": 2,
         "firstname": "Curly",
         "lastname": "Howard",
         "middleinitial": "B",
-        "dateofbirth": "Mon Jun 01 1925 00:00:00 GMT-0700 (Mountain Daylight Time)",
-        "dateofemployment": "Thu Jul 03 1947 00:00:00 GMT-0700 (Mountain Daylight Time)"
+        "dateofbirth": "06/01/1925",
+        "dateofemployment": "07/03/1947"
     }
 ]
 ```
@@ -101,8 +101,8 @@ Returns Ex:
     "firstname": "Larry",
     "lastname": "Fine",
     "middleinitial": "A",
-    "dateofbirth": "Thu Jan 01 1925 00:00:00 GMT-0700 (Mountain Standard Time)",
-    "dateofemployment": "Sun Mar 16 1969 00:00:00 GMT-0700 (Mountain Daylight Time)"
+    "dateofbirth": "01/01/1925",
+    "dateofemployment": "03/16/1969"
 }
 ```
 
