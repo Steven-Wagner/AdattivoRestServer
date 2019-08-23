@@ -8,6 +8,7 @@ describe('employee Endpoints', function() {
     const testEmployees = helpers.makeEmployeesArray();
     const testEmployee = testEmployees[0];
     const newEmployee = helpers.makeNewEmployee();
+    const updatedFields = helpers.makeUpdatedEmployeeData();
 
     before('make knex instance', () => {
         db = knex({
@@ -285,7 +286,7 @@ describe('employee Endpoints', function() {
             for (let [key, value] of Object.entries(columnsToChange)) {
                 it(`Responds 204 and employee's ${key} is changed`, () => {
                     const employeeId = testEmployee.id;
-                    const updatedEmployee = helpers.makeUpdatedEmployeeData();
+                    const updatedEmployee = Object.assign({}, updatedFields);
 
                     const columnToUpdate = {};
                     columnToUpdate[key] = updatedEmployee[key];
@@ -317,7 +318,7 @@ describe('employee Endpoints', function() {
                 for (let name of nameColumns) {
                     it(`${name} is capitalized`, () => {
                         const employeeId = testEmployee.id;
-                        const updatedEmployee = helpers.makeUpdatedEmployeeData();
+                        const updatedEmployee = Object.assign({}, updatedFields)
                         updatedEmployee[name] = helpers.unCapitalizeFirstLetter(updatedEmployee[name]);
 
                         return request(app)
@@ -336,6 +337,33 @@ describe('employee Endpoints', function() {
                         })
                     })
                 }
+            })
+            context('Inputs are stripped of trailing white space', () => {
+                it.only('All feilds are stripped of trialing white space', () => {
+                    const employeeId = testEmployee.id;
+                    const updatedEmployee = Object.assign({}, updatedFields);
+                    for (let [key, value] of Object.entries(updatedEmployee)) {
+                        updatedEmployee[key] = value+'  ';
+                    }   
+                    console.log('updatedEmployee', updatedEmployee)
+                    return request(app)
+                    .patch(`/api/employee/${employeeId}/`)
+                    .send(updatedEmployee)
+                    .expect(204)
+                    .then(() => {
+                        return db
+                            .from('employees')
+                            .where('id', employeeId)
+                            .select('firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment')
+                            .first()
+                            .then(res => {
+                                const fieldsToCheck = ['firstname', 'lastname', 'middleinitial', 'dateofbirth', 'dateofemployment'];
+                                for (let field of fieldsToCheck) {
+                                    expect(res[field]).to.eql(updatedFields[field]);
+                                }
+                            })
+                    })
+                })
             })
         })
         context('Validate dates', () => {

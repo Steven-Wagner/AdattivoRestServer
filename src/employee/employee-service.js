@@ -217,6 +217,13 @@ const employeeService = {
             .update({
                 status: 'INACTIVE'
             })
+    },
+    trimEmployeeFields(employee) {
+        for ([key, value] of Object.entries(employee)) {
+            if (value) {
+                employee[key] = value.trim();
+            }
+        }
     }
 }
 

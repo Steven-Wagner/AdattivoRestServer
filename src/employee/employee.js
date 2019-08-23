@@ -38,6 +38,8 @@ employeeRouter
         const updatedEmployee = {firstname, lastname, dateofemployment, dateofbirth, status, middleinitial};
         const employeeId = req.params.employee_id;
 
+        employeeService.trimEmployeeFields(updatedEmployee);
+
         return employeeService.validateUpdateEmployee(employeeId, updatedEmployee, db)
         .then(errorMessages => {
             if (errorMessages.length > 0) {
