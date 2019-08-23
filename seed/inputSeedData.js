@@ -27,10 +27,12 @@ const seedDatabase = new Promise(function(resolve, reject) {
 })
 
 seedDatabase.then(() => {
+    //If seed in succesful end the DB connection and alert the user
     db.destroy();
     console.log(`Data seeded at ${DB_URL}`)
 })
 .catch(error => {
+    //If seed was unsuccesful end DB connection and log the error to the console
     db.destroy();
     console.log(error.message)
 });
