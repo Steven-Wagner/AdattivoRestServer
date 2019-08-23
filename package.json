@@ -11,6 +11,7 @@
     "dev": "nodemon src/server.js",
     "migrate": "postgrator --config postgrator-config.js",
     "migrate-production": "postgrator --config postgrator-production-config.js",
+    "preseed-data": "npm run migrate-production",
     "seed-data": "node seed/inputSeedData.js"
   },
   "keywords": [],
