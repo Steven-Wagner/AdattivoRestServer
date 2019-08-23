@@ -152,6 +152,7 @@ May include one or more of the following feilds:
     "middleinitial":[Must only be a letter A-Z|a-z, Must be 1 character in length][API will auto capitalize],
     "dateofemployment":[Must be in MM/DD/YYYY format],
     "dateofbirth":[Must be in MM/DD/YYYY format],
+    "status":[Must be 'ACTIVE']
 }
 ```
 
