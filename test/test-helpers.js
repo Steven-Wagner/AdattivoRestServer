@@ -67,6 +67,7 @@ function cleanTables(db) {
 }
 
 function seedEmployees(db, employees) {
+    //Removes IDs before insertion to avoid automatic ID increment issues that can occur
     const preppedEmployees = employees.map(employee => {
         const employeeInfo = Object.assign({}, employee);
         delete employeeInfo.id;

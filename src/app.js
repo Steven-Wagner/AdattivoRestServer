@@ -14,6 +14,7 @@ const morganSetting = (NODE_ENV === 'production')
     : 'dev';
 
 app.use(morgan(morganSetting));
+//For the sake of simplicity cors will accept from any origin
 app.use(cors());
 app.use(helmet());
 

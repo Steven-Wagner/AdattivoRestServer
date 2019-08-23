@@ -6,7 +6,6 @@ describe('all-employees Endpoints', function() {
     let db;
 
     const testEmployees = helpers.makeEmployeesArray();
-    const testEmployee = testEmployees[0];
 
     before('make knex instance', () => {
         db = knex({
