@@ -1,5 +1,6 @@
 const timeFunctions = {
     convertEmployeeDatesToMMDDYYYY(employee) {
+        //Accepts an employee object with keys ['dateofbirth', 'dateofemployment'] and converts thier date values to MM/DD/YYYY format
         const valuesToFromat = ['dateofbirth', 'dateofemployment'];
         for (let date of valuesToFromat) {
             employee[date] = new Date(employee[date]);
@@ -15,6 +16,7 @@ const timeFunctions = {
 
             const formattedDate = `${month}/${day}/${year}`;
 
+            //Employee object now has dates in MM/DD/YYYY format
             employee[date] = formattedDate;
         }
     },
