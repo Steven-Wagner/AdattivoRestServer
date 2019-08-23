@@ -130,6 +130,9 @@ const employeeService = {
                 employee
             )
             .returning('id')
+            .then(newIdArray => {
+                return ({id: newIdArray[0]});
+            })
     },
     capitalizeNames(employee) {
         if (employee.firstname) {
