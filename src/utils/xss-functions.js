@@ -1,6 +1,7 @@
 const xss = require('xss');
 
 function serializeEmployee(employee) {
+    //Prevent XSS attacks
     return {
         id: employee.id,
         firstname: xss(employee.firstname),
