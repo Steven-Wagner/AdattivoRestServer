@@ -126,7 +126,9 @@ const employeeService = {
     },
     postNewEmployee(employee, db) {
         //make sure that middleinitial is capitalized
-        employee.middleinitial = employee.middleinitial.toUpperCase();
+        if (employee.middleinitial) {
+            employee.middleinitial = employee.middleinitial.toUpperCase();
+        }
 
         //Make sure that first letter of first and last name is captalized
         this.capitalizeNames(employee);
@@ -193,7 +195,9 @@ const employeeService = {
         this.capitalizeNames(employee);
 
         //Make sure that middleinitial is capitalized
-        employee.middleinitial = employee.middleinitial.toUpperCase();
+        if (employee.middleinitial) {
+            employee.middleinitial = employee.middleinitial.toUpperCase();
+        }
 
         //Update employee. Undefined values will not update
         return db
