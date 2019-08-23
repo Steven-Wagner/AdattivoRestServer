@@ -41,10 +41,7 @@ describe('all-employees Endpoints', function() {
                 .get(`/api/all-employees/`)
                 .expect(200)
                 .then(res => {
-                    expect(res.body.length).to.eql(expectedResult.length);
-                    res.body.forEach(employee => {
-                        expect(employee.status).to.eql('ACTIVE');
-                    });
+                    expect(res.body).to.have.length(expectedResult.length);
                 })
             })
             context('Dates are returned in correct format', () => {

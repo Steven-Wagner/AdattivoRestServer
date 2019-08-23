@@ -367,7 +367,7 @@ describe('employee Endpoints', function() {
                 }
             })
             context('Inputs are stripped of trailing white space', () => {
-                it.only('All feilds are stripped of trialing white space', () => {
+                it('All feilds are stripped of trialing white space', () => {
                     const employeeId = testEmployee.id;
                     const updatedEmployee = Object.assign({}, updatedFields);
                     for (let [key, value] of Object.entries(updatedEmployee)) {
