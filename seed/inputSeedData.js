@@ -18,19 +18,19 @@ const seedDatabase = new Promise(function(resolve, reject) {
                 .into('employees')
                 .insert(seedData)
                 .then(() => {
-                    db.destroy();
                     resolve();
                 })
             })
             .catch(error => {
-                db.destroy()
                 reject(error);
             })
 })
 
 seedDatabase.then(() => {
+    db.destroy();
     console.log(`Data seeded at ${DB_URL}`)
 })
 .catch(error => {
+    db.destroy();
     console.log(error)
 });
