@@ -1,25 +1,24 @@
 const moment = require('moment');
 
 const employeeService = {
-    validateGetEmployee(employee, res) {
+    validateGetEmployee(employee) {
         let errorMessages = [];
-        const doesNotExist = this.validateEmployeeExists(employee, res);
-        if (doesNotExist) {
-            errorMessages.push(doesNotExist)
-        }
+        errorMessages = this.validateEmployeeExists(employee, errorMessages);
 
         return errorMessages;
     },
 
-    validateEmployeeExists(employee) {
+    validateEmployeeExists(employee, errorMessages) {
         if (!employee) {
-            return `Employee does not exists`
+            errorMessages.push(`Employee does not exists`);
+            return errorMessages;
         }
         if (employee.status === 'INACTIVE') {
-            return `Employee is INACTIVE`
+            errorMessages.push(`Employee is INACTIVE`);
+            return errorMessages;
         }
         else {
-            return;
+            return errorMessages;
         }
     },
 

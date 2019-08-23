@@ -11,13 +11,15 @@ const employeeRouter = express.Router();
 employeeRouter
     .route('/:employee_id')
     .get((req, res, next) => {
+        //GET all info about a single 'ACTIVE' employee by ID
         const db = req.app.get('db');
         const employee_id = req.params.employee_id;
 
-        //Get employee by id. Will return an employee or undefined
+        //Get the employee by id from DB. Will return an employee or if no employee exsts will return undefined
         employeeService.getEmployeeById(employee_id, db)
         .then(employee => {
-            const errorMessages = employeeService.validateGetEmployee(employee)
+            //
+            errorMessages = employeeService.validateGetEmployee(employee)
             if (errorMessages.length > 0) {
                 res.status(400).json({
                     message: errorMessages
