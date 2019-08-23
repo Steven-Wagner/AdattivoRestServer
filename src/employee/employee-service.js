@@ -3,6 +3,7 @@ const moment = require('moment');
 const employeeService = {
     validateGetEmployee(employee) {
         let errorMessages = [];
+        //Validates that the employees exists
         errorMessages = this.validateEmployeeExists(employee, errorMessages);
 
         return errorMessages;
@@ -10,10 +11,12 @@ const employeeService = {
 
     validateEmployeeExists(employee, errorMessages) {
         if (!employee) {
+            //If employee does not exist return error message
             errorMessages.push(`Employee does not exists`);
             return errorMessages;
         }
         if (employee.status === 'INACTIVE') {
+            //If employee has already been deleted return error message
             errorMessages.push(`Employee is INACTIVE`);
             return errorMessages;
         }
@@ -24,6 +27,7 @@ const employeeService = {
 
     async getEmployeeById(employee_id, db) {
         if (isNaN(employee_id)) {
+            //If employee_id is not number return undefined
             return;
         }
         return db
@@ -40,17 +44,20 @@ const employeeService = {
         
         errorMessages = this.validateNamesAreNotTooLong(employee, errorMessages);
 
+        //Validate the dates are in MM/DD/YYYY format
         errorMessages = this.validateDatesAreValid(employee, errorMessages);
 
         errorMessages = this.validateMiddleInitial(employee, errorMessages);
 
         if (errorMessages.length < 1) {
+            //If no errors have already been thrown check if new employee is a duplicate of one that already exists
             errorMessages = await this.validateDuplicate(employee, errorMessages, db);
         }
 
         return errorMessages;
     },
     validateDuplicate(employee, errorMessages, db) {
+        //If all fields match a user already in the database return an error message
         return db
             .from('employees')
             .where('firstname', employee.firstname)
@@ -73,7 +80,7 @@ const employeeService = {
                 errorMessages.push('Middle Initial must be one character in length');
             }
             //initial must be a letter or undefined
-            if (!employee.middleinitial.match(/[A-Z|a-z| ]/i)) {
+            if (!employee.middleinitial.match(/[A-Z|a-z| ]/i) && employee.middleinitial) {
                 errorMessages.push('Middle Initial must be a letter from A-Z')
             }
         }
@@ -84,6 +91,7 @@ const employeeService = {
         
         dateKeysToCheck.forEach(date => {
             if (employee[date]) {
+                //Date must be in MM/DD/YYYY format and must be a valid date
                 if (!moment(employee[date], "MM/DD/YYYY", true).isValid()) {
                     errorMessages.push(`${date} is invalid make sure it is in MM/DD/YYYY format`)
                 }
@@ -92,6 +100,7 @@ const employeeService = {
         return errorMessages;
     },
     validateNamesAreNotTooLong(employee, errorMessages) {
+        //Names may not be longer than 50 characters
         if (employee.firstname) {
             if (employee.firstname.length > 50) {
                 errorMessages.push('First Name must be less than 50 characters')
@@ -180,8 +189,13 @@ const employeeService = {
     },
 
     updateEmployee(employeeId, employee, db) {
+        //Make sure that any updates names are capitalized
         this.capitalizeNames(employee);
 
+        //Make sure that middleinitial is capitalized
+        employee.middleinitial = employee.middleinitial.toUpperCase();
+
+        //Update employee. Undefined values will not update
         return db
             .from('employees')
             .where('id', employeeId)
@@ -218,6 +232,7 @@ const employeeService = {
             })
     },
     trimEmployeeFields(employee) {
+        //Remove all trailing white space from all employee feilds
         for ([key, value] of Object.entries(employee)) {
             if (value) {
                 employee[key] = value.trim();
